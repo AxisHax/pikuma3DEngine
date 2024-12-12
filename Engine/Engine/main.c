@@ -1,8 +1,9 @@
 #include <stdio.h>
+#include <stdint.h>
 #include <SDL.h>
 #include <stdbool.h>
 
-#pragma region MyRegion
+#pragma region Global variables
 /// <summary>
 /// Pointer to the SDL window data that will be used throughout the application.
 /// </summary>
@@ -14,9 +15,29 @@ SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
 
 /// <summary>
+/// The texture that will hold the data we have in our color_buffer to render to the screen.
+/// </summary>
+SDL_Texture* color_buffer_texture = NULL;
+
+/// <summary>
 /// Boolean that keeps track of the running state of the applicaion.
 /// </summary>
 bool is_running = false;
+
+/// <summary>
+/// Pointer to the color buffer.
+/// </summary>
+uint32_t* color_buffer = NULL;
+
+/// <summary>
+/// The window width in pixels.
+/// </summary>
+int window_width = 800;
+
+/// <summary>
+/// The window height in pixels.
+/// </summary>
+int window_height = 600;
 #pragma endregion
 
 /// <summary>
@@ -30,7 +51,7 @@ bool initialize_window(void)
 	*	Function can be made static, but I'm intentionally leaving it as is for the true
 	*	C experience.
 	*/
-
+	
 	if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
 	{
 		// If everything wasn't initialized correctly, return false.
@@ -43,8 +64,8 @@ bool initialize_window(void)
 		NULL, // The title of the window.
 		SDL_WINDOWPOS_CENTERED, // X position of the window.
 		SDL_WINDOWPOS_CENTERED, // Y position of the window.
-		800, // Width.
-		600, // Height.
+		window_width, // Width.
+		window_height, // Height.
 		SDL_WINDOW_BORDERLESS // Flags.
 	);
 
@@ -69,9 +90,35 @@ bool initialize_window(void)
 	return true;
 }
 
+/// <summary>
+/// Setup the color buffer.
+/// </summary>
+/// <param name="">Void.</param>
 void setup(void)
 {
+	// Allocate memory for the color buffer.
+	color_buffer = (uint32_t*)malloc(sizeof(uint32_t) * window_width * window_height);
 
+	if (!color_buffer)
+	{
+		fprintf(stderr, "Error allocating color buffer.\n");
+		return;
+	}
+
+	// Create the SDL texture used to display the color buffer.
+	color_buffer_texture = SDL_CreateTexture(
+		renderer,
+		SDL_PIXELFORMAT_ARGB8888,
+		SDL_TEXTUREACCESS_STREAMING,
+		window_width,
+		window_height
+	);
+
+	if (!color_buffer_texture)
+	{
+		fprintf(stderr, "Error creating the color buffer texture.\n");
+		return;
+	}
 }
 
 /// <summary>
@@ -107,9 +154,48 @@ void update(void)
 }
 
 /// <summary>
+/// Render the color buffer to the screen.
+/// </summary>
+/// <param name="">Void.</param>
+void render_color_buffer(void)
+{
+	int res = SDL_UpdateTexture(
+		color_buffer_texture, 
+		NULL, 
+		color_buffer, 
+		(int)window_width * sizeof(uint32_t)
+	);
+
+	if (res < 0)
+	{
+		fprintf(stderr, "Error occured while updating texture: %d.\n", SDL_Error(res));
+	}
+
+	SDL_RenderCopy(renderer, color_buffer_texture, NULL, NULL);
+}
+
+/// <summary>
+/// Clear the color buffer with the given color.
+/// </summary>
+/// <param name="color">An ARGB color value.</param>
+void clear_color_buffer(uint32_t color)
+{
+	for (int y = 0; y < window_height; y++)
+	{
+		for (int x = 0; x < window_width; x++)
+		{
+			// We traverse to each row (the row is incremented by the value of y)
+			// and across it (position within the row determined by the value of x)
+			// and set the color of that pixel.
+			color_buffer[(window_width * y) + x] = color;
+		}
+	}
+}
+
+/// <summary>
 /// Render visuals to the screen.
 /// </summary>
-/// <param name=""></param>
+/// <param name="">Void.</param>
 void render(void)
 {
 	// Set the color for drawing to the screen.
@@ -117,8 +203,24 @@ void render(void)
 	// Clear the color buffer with the above color.
 	SDL_RenderClear(renderer);
 
+	render_color_buffer();
+
+	clear_color_buffer(0xFFFFFF00);
+
 	// Update the screen with the color we chose.
 	SDL_RenderPresent(renderer);
+}
+
+/// <summary>
+/// Release allocated resources.
+/// </summary>
+/// <param name="">Void.</param>
+void destroy_window(void)
+{
+	free(color_buffer);
+	SDL_DestroyRenderer(renderer);
+	SDL_DestroyWindow(window);
+	SDL_Quit();
 }
 
 /// <summary>
@@ -140,6 +242,8 @@ int main(int argc, char* argv[])
 		update();
 		render();
 	}
+
+	destroy_window();
 	
 	return 0;
 }
