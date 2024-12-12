@@ -171,7 +171,12 @@ void render_color_buffer(void)
 		fprintf(stderr, "Error occured while updating texture: %d.\n", SDL_Error(res));
 	}
 
-	SDL_RenderCopy(renderer, color_buffer_texture, NULL, NULL);
+	res = SDL_RenderCopy(renderer, color_buffer_texture, NULL, NULL);
+
+	if (res < 0)
+	{
+		fprintf(stderr, "Error occured while updating texture: %d.\n", SDL_Error(res));
+	}
 }
 
 /// <summary>
