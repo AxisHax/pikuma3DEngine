@@ -43,7 +43,7 @@ int window_height = 600;
 /// <summary>
 /// Initialize an SDL window and initialize the renderer.
 /// </summary>
-/// <param name="">Void.</param>
+/// <param name="Void">No inputs.</param>
 /// <returns>True if everything was able to be initialized, false otherwise.</returns>
 bool initialize_window(void)
 {
@@ -93,7 +93,7 @@ bool initialize_window(void)
 /// <summary>
 /// Setup the color buffer.
 /// </summary>
-/// <param name="">Void.</param>
+/// <param name="Void">No inputs.</param>
 void setup(void)
 {
 	// Allocate memory for the color buffer.
@@ -124,7 +124,7 @@ void setup(void)
 /// <summary>
 /// Process the user's input.
 /// </summary>
-/// <param name="">Void.</param>
+/// <param name="Void">No inputs.</param>
 void process_input(void)
 {
 	SDL_Event event;
@@ -156,7 +156,7 @@ void update(void)
 /// <summary>
 /// Render the color buffer to the screen.
 /// </summary>
-/// <param name="">Void.</param>
+/// <param name="Void">Void.</param>
 void render_color_buffer(void)
 {
 	int res = SDL_UpdateTexture(
@@ -185,22 +185,36 @@ void render_color_buffer(void)
 /// <param name="color">An ARGB color value.</param>
 void clear_color_buffer(uint32_t color)
 {
-	for (int y = 0; y < window_height; y++)
-	{
-		for (int x = 0; x < window_width; x++)
-		{
-			// We traverse to each row (the row is incremented by the value of y)
-			// and across it (position within the row determined by the value of x)
-			// and set the color of that pixel.
-			color_buffer[(window_width * y) + x] = color;
-		}
-	}
+	int y = 0;
+	int x = 0;
+
+	// We traverse to each row (the row is incremented by the value of y)
+	// and across it (position within the row determined by the value of x)
+	// and set the color of that pixel.
+    for (int i = 0; i < window_width * window_height; i++)
+    {
+    	y = i / window_width;
+    	x = i % window_width;
+    	
+	    color_buffer[(window_width * y) + x] = color;
+    }
+
+	// for (int y = 0; y < window_height; y++)
+	// {
+	// 	for (int x = 0; x < window_width; x++)
+	// 	{
+	// 		// We traverse to each row (the row is incremented by the value of y)
+	// 		// and across it (position within the row determined by the value of x)
+	// 		// and set the color of that pixel.
+	// 		color_buffer[(window_width * y) + x] = color;
+	// 	}
+	// }
 }
 
 /// <summary>
 /// Render visuals to the screen.
 /// </summary>
-/// <param name="">Void.</param>
+/// <param name="Void">No inputs.</param>
 void render(void)
 {
 	// Set the color for drawing to the screen.
@@ -219,7 +233,7 @@ void render(void)
 /// <summary>
 /// Release allocated resources.
 /// </summary>
-/// <param name="">Void.</param>
+/// <param name="Void">No inputs.</param>
 void destroy_window(void)
 {
 	free(color_buffer);
