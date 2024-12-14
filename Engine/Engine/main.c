@@ -32,12 +32,12 @@ uint32_t* color_buffer = NULL;
 /// <summary>
 /// The window width in pixels.
 /// </summary>
-int window_width = 800;
+int window_width;
 
 /// <summary>
 /// The window height in pixels.
 /// </summary>
-int window_height = 600;
+int window_height;
 #pragma endregion
 
 /// <summary>
@@ -58,6 +58,12 @@ bool initialize_window(void)
 		fprintf(stderr, "Error initializing SDL.\n");
 		return false;
 	}
+
+	SDL_DisplayMode display_mode;
+	SDL_GetCurrentDisplayMode(0, &display_mode);
+
+	window_width = display_mode.w;
+	window_height = display_mode.h;
 	
 	// Create the SDL window.
 	window = SDL_CreateWindow(
@@ -85,6 +91,9 @@ bool initialize_window(void)
 		fprintf(stderr, "Error creating SDL renderer.\n");
 		return false;
 	}
+
+	// Set window to fullscreen.
+	SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
 
 	// We were able to initialize things properly.
 	return true;
@@ -185,6 +194,17 @@ void render_color_buffer(void)
 /// <param name="color">An ARGB color value.</param>
 void clear_color_buffer(uint32_t color)
 {
+	// int y = 0;
+	// int x = 0;
+
+	// // Optimized loop... but its slower.
+	// for (int i = 0; i < window_width * window_height; i++, y = (i / window_width), x = (i % window_width))
+	// {
+	// 	// Set the pixel color.
+	// 	color_buffer[(y * window_width) + x] = color;
+	// }
+	
+	// Slow solution... but it's faster???
 	for (int y = 0; y < window_height; y++)
 	{
 		for (int x = 0; x < window_width; x++)
@@ -193,6 +213,42 @@ void clear_color_buffer(uint32_t color)
 			// and across it (position within the row determined by the value of x)
 			// and set the color of that pixel.
 			color_buffer[(window_width * y) + x] = color;
+		}
+	}
+}
+
+/// <summary>
+/// Draw a grid to the screen.
+/// </summary>
+/// <param name="color">An ARGB color value to draw.</param>
+void draw_grid(uint32_t color)
+{
+	for (int y = 0; y < window_height; y += 10)
+	{
+		for (int x = 0; x < window_width; x += 10)
+		{
+			color_buffer[(window_width * y) + x] = color;
+		}
+	}
+}
+
+/// <summary>
+/// Draw a rectangle to the screen.
+/// </summary>
+/// <param name="color">An ARGB color value to draw.</param>
+/// <param name="x_start">Begin x position to draw.</param>
+/// <param name="y_start">Begin y position to draw.</param>
+/// <param name="width">Witdh of rectangle.</param>
+/// <param name="height">Height of rectangle.</param>
+void draw_rect(uint32_t color, int loc_x, int loc_y, int width, int height)
+{
+	for (int i = 0; i < width; i++)
+	{
+		for (int j = 0; j < height; j++)
+		{
+			int current_x = loc_x + i;
+			int current_y = loc_y + j;
+			color_buffer[(window_width * current_y) + current_x] = color;
 		}
 	}
 }
@@ -208,10 +264,12 @@ void render(void)
 	// Clear the color buffer with the above color.
 	SDL_RenderClear(renderer);
 
+	draw_grid(0xFF333333);
+	draw_rect(0xFFFFFFFF, 200, 200, 300, 100);
+
 	render_color_buffer();
-
-	clear_color_buffer(0xFFFFFF00);
-
+	clear_color_buffer(0xFF000000);
+	
 	// Update the screen with the color we chose.
 	SDL_RenderPresent(renderer);
 }
