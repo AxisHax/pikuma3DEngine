@@ -63,6 +63,14 @@ void render_color_buffer(void);
 void clear_color_buffer(uint32_t color);
 
 /// <summary>
+/// Draws a pixel onto the screen.
+/// </summary>
+/// <param name="x">The x location of the pixel.</param>
+/// <param name="y">The y location of the pixel.</param>
+/// <param name="color">The color to set the pixel.</param>
+void draw_pixel(int x, int y, uint32_t color);
+
+/// <summary>
 /// Draw a grid to the screen.
 /// </summary>
 /// <param name="color">An ARGB color value to draw.</param>
