@@ -3,6 +3,7 @@
 #include <SDL.h>
 #include <stdbool.h>
 #include "display.h"
+#include "vector.h"
 
 
 #pragma region Global variables
@@ -108,6 +109,7 @@ int main(int argc, char* argv[])
 	is_running = initialize_window();
 
 	setup();
+	vec3_t vector = { 2.0, 3.0, -1.0 };
 
 	// Render loop. Also called a game loop.
 	while (is_running)
