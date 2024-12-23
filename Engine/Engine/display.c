@@ -38,11 +38,10 @@ int window_height;
 #pragma endregion
 
 
-/// <summary>
-/// Initialize an SDL window and initialize the renderer.
-/// </summary>
-/// <param name="">Void.</param>
-/// <returns>True if everything was able to be initialized, false otherwise.</returns>
+/**
+ * @brief Initialize an SDL window and initialize the renderer.
+ * @return True if the window was initialized successfully, false otherwise.
+ */
 bool initialize_window(void)
 {
 	/* NOTES:
@@ -97,10 +96,9 @@ bool initialize_window(void)
 	return true;
 }
 
-/// <summary>
-/// Render the color buffer to the screen.
-/// </summary>
-/// <param name="">Void.</param>
+/**
+ * @brief Setup the color buffer.
+ */
 void render_color_buffer(void)
 {
 	int res = SDL_UpdateTexture(
@@ -123,11 +121,11 @@ void render_color_buffer(void)
 	}
 }
 
-/// <summary>
-/// Clear the color buffer with the given color.
-/// </summary>
-/// <param name="color">An ARGB color value.</param>
-void clear_color_buffer(uint32_t color)
+/**
+ * @brief Clear the color buffer with a specified color.
+ * @param color An ARGB color value.
+ */
+void clear_color_buffer(const uint32_t color)
 {
 	// int y = 0;
 	// int x = 0;
@@ -152,11 +150,25 @@ void clear_color_buffer(uint32_t color)
 	}
 }
 
-/// <summary>
-/// Draw a grid to the screen.
-/// </summary>
-/// <param name="color">An ARGB color value to draw.</param>
-void draw_grid(uint32_t color)
+/**
+ * @brief Draw a pixel to the screen.
+ * @param x X position to draw.
+ * @param y Y position to draw.
+ * @param color An ARGB color value.
+ */
+void draw_pixel(const int x, const int y, const uint32_t color)
+{
+	if (x >= 0 && x < window_width && y >= 0 && y < window_height)
+	{
+		color_buffer[(window_width * y) + x] = color;
+	}
+}
+
+/**
+ * @brief Draw a grid to the screen.
+ * @param color An ARGB color value to draw.
+ */
+void draw_grid(const uint32_t color)
 {
 	for (int y = 0; y < window_height; y += 10)
 	{
@@ -167,31 +179,33 @@ void draw_grid(uint32_t color)
 	}
 }
 
-/// <summary>
-/// Draw a rectangle to the screen.
-/// </summary>
-/// <param name="color">An ARGB color value to draw.</param>
-/// <param name="x_start">Begin x position to draw.</param>
-/// <param name="y_start">Begin y position to draw.</param>
-/// <param name="width">Witdh of rectangle.</param>
-/// <param name="height">Height of rectangle.</param>
-void draw_rect(uint32_t color, int loc_x, int loc_y, int width, int height)
+/**
+ * @brief Draw a rectangle to the screen.
+ * @param color An ARGB color value.
+ * @param loc_x X position to draw.
+ * @param loc_y Y position to draw.
+ * @param width Witdh of rectangle.
+ * @param height Height of rectangle.
+ */
+void draw_rect(const uint32_t color, const float loc_x, const float loc_y, const int width, const int height)
 {
 	for (int i = 0; i < width; i++)
 	{
 		for (int j = 0; j < height; j++)
 		{
-			int current_x = loc_x + i;
-			int current_y = loc_y + j;
-			color_buffer[(window_width * current_y) + current_x] = color;
+			// Calculate the current x and y.
+			const int current_x = (int)(loc_x + (float)i);
+			const int current_y = (int)(loc_y + (float)j);
+			
+			// Draw the pixel.
+			draw_pixel(current_x, current_y, color);
 		}
 	}
 }
 
-/// <summary>
-/// Release allocated resources.
-/// </summary>
-/// <param name="">Void.</param>
+/**
+ * @brief Initialize the color buffer.
+ */
 void destroy_window(void)
 {
 	free(color_buffer);
