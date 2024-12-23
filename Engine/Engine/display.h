@@ -43,45 +43,50 @@ extern int window_height;
 #pragma endregion
 
 #pragma region Function definitions
-/// <summary>
-/// Initialize an SDL window and initialize the renderer.
-/// </summary>
-/// <param name="">Void.</param>
-/// <returns>True if everything was able to be initialized, false otherwise.</returns>
+/**
+ * @brief Initialize an SDL window and initialize the renderer.
+ * @return True if the window was initialized successfully, false otherwise.
+ */
 bool initialize_window(void);
 
-/// <summary>
-/// Render the color buffer to the screen.
-/// </summary>
-/// <param name="">Void.</param>
+/**
+ * @brief Setup the color buffer.
+ */
 void render_color_buffer(void);
 
-/// <summary>
-/// Clear the color buffer with the given color.
-/// </summary>
-/// <param name="color">An ARGB color value.</param>
-void clear_color_buffer(uint32_t color);
+/**
+ * @brief Clear the color buffer with a specified color.
+ * @param color An ARGB color value.
+ */
+void clear_color_buffer(const uint32_t color);
 
-/// <summary>
-/// Draw a grid to the screen.
-/// </summary>
-/// <param name="color">An ARGB color value to draw.</param>
-void draw_grid(uint32_t color);
+/**
+ * @brief Draw a pixel to the screen.
+ * @param x X position to draw.
+ * @param y Y position to draw.
+ * @param color An ARGB color value.
+ */
+void draw_pixel(const int x, const int y, const uint32_t color);
 
-/// <summary>
-/// Draw a rectangle to the screen.
-/// </summary>
-/// <param name="color">An ARGB color value to draw.</param>
-/// <param name="x_start">Begin x position to draw.</param>
-/// <param name="y_start">Begin y position to draw.</param>
-/// <param name="width">Witdh of rectangle.</param>
-/// <param name="height">Height of rectangle.</param>
-void draw_rect(uint32_t color, int loc_x, int loc_y, int width, int height);
+/**
+ * @brief Draw a grid to the screen.
+ * @param color An ARGB color value to draw.
+ */
+void draw_grid(const uint32_t color);
 
-/// <summary>
-/// Release allocated resources.
-/// </summary>
-/// <param name="">Void.</param>
+/**
+ * @brief Draw a rectangle to the screen.
+ * @param color An ARGB color value.
+ * @param loc_x X position to draw.
+ * @param loc_y Y position to draw.
+ * @param width Witdh of rectangle.
+ * @param height Height of rectangle.
+ */
+void draw_rect(const uint32_t color, const float loc_x, const float loc_y, const int width, const int height);
+
+/**
+ * @brief Release allocated resources.
+ */
 void destroy_window(void);
 #pragma endregion
 

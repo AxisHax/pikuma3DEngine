@@ -3,19 +3,44 @@
 #include <SDL.h>
 #include <stdbool.h>
 #include "display.h"
+#include "vector.h"
 
+/**
+ * @brief The number of points in the cube.
+ */
+#define N_POINTS (int)(9 * 9 * 9)
+
+/**
+ * @brief The factor used to calculate the field of view.
+ */
+#define FOV_FACTOR (float)700
 
 #pragma region Global variables
-/// <summary>
-/// Boolean that keeps track of the running state of the applicaion.
-/// </summary>
+/**
+ * @brief Array of 2D vectors that will hold the projected points.
+ */
+vec2_t projected_points[N_POINTS];
+
+/**
+ * @brief Array of 3D vectors that will hold the points of a cube.
+ */
+vec3_t cube_points[N_POINTS];
+
+/**
+ * @brief The position of the camera in 3D space.
+ */
+vec3_t camera_position = { 0, 0, -5 };
+
+/**
+ * @brief Check if the application is running.
+ */
 bool is_running = false;
 #pragma endregion
 
-/// <summary>
-/// Setup the color buffer.
-/// </summary>
-/// <param name="">Void.</param>
+/**
+ * @brief Initialize an SDL window and initialize the renderer.
+ * @return True if the window was initialized successfully, false otherwise.
+ */
 void setup(void)
 {
 	// Allocate memory for the color buffer.
@@ -39,14 +64,28 @@ void setup(void)
 	if (!color_buffer_texture)
 	{
 		fprintf(stderr, "Error creating the color buffer texture.\n");
-		return;
+	}
+
+	
+	int point_count = 0;
+
+	// Loop through all points in the cube.
+	for (float x = -1; x <= 1; x += 0.25f)
+	{
+		for (float y = -1; y <= 1; y += 0.25f)
+		{
+			for (float z = -1; z <= 1; z += 0.25f)
+			{
+				vec3_t new_point = { .x = x, .y = y, .z = z };
+				cube_points[point_count++] = new_point;
+			}
+		}
 	}
 }
 
-/// <summary>
-/// Process the user's input.
-/// </summary>
-/// <param name="">Void.</param>
+/**
+ * @brief Process input from the user.
+ */
 void process_input(void)
 {
 	SDL_Event event;
@@ -70,24 +109,62 @@ void process_input(void)
 	}
 }
 
-void update(void)
+/**
+ * @brief Project a 3D point to a 2D point.
+ * @param point The 3D point to project.
+ * @return The projected 2D point.
+ */
+vec2_t project(const vec3_t point)
 {
+	const vec2_t projected_point =
+	{
+		.x = (FOV_FACTOR * point.x) / point.z,
+		.y = (FOV_FACTOR * point.y) / point.z
+	};
 
+	return projected_point;
 }
 
-/// <summary>
-/// Render visuals to the screen.
-/// </summary>
-/// <param name="">Void.</param>
+/**
+ * @brief Update the game world.
+ */
+void update(void)
+{
+	for (int i = 0; i < N_POINTS; i++)
+	{
+		vec3_t point = cube_points[i];
+
+		// Move the point away from the camera.
+		point.z -= camera_position.z;
+
+		// Project the current point.
+		vec2_t projected_point = project(point);
+
+		// Save project 2D vector in the array of projected points.
+		projected_points[i] = projected_point;
+	}
+}
+
+/**
+ * @brief Render the color buffer to the screen.
+ */
 void render(void)
 {
-	// Set the color for drawing to the screen.
-	SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-	// Clear the color buffer with the above color.
-	SDL_RenderClear(renderer);
 
 	draw_grid(0xFF333333);
-	draw_rect(0xFF00FFFF, 200, 200, 300, 100);
+
+	// Loop all projected points and render them.
+	for (int i = 0; i < N_POINTS; i++)
+	{
+		vec2_t projected_point = projected_points[i];
+		draw_rect(
+			0x0FFFFFF00,
+			projected_point.x + (window_width / 2),
+			projected_point.y + (window_height / 2),
+			4,
+			4
+			);
+	}
 
 	render_color_buffer();
 	clear_color_buffer(0xFF000000);
@@ -96,12 +173,12 @@ void render(void)
 	SDL_RenderPresent(renderer);
 }
 
-/// <summary>
-/// Entry point of the program.
-/// </summary>
-/// <param name="argc">Number of command-line arguments.</param>
-/// <param name="argv">Command-line arguments.</param>
-/// <returns>0 on successful execution of the program, other values if program execution was not successful.</returns>
+/**
+ * @brief Main entry point of the application.
+ * @param argc The number of command line arguments.
+ * @param argv The command line arguments.
+ * @return 0 if the application ran successfully, 1 otherwise.
+ */
 int main(int argc, char* argv[])
 {
 	is_running = initialize_window();
