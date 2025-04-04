@@ -15,6 +15,16 @@
  */
 #define FOV_FACTOR (float)700
 
+/**
+ * @brief The default grid color.
+ */
+#define DEFAULT_GRID_COLOR 0xFF333333
+
+/**
+ * @brief The color to use when clearing the color buffer.
+ */
+#define CLEAR_BUFFER_COLOR 0xFF000000
+
 #pragma region Global variables
 /**
  * @brief Array of 2D vectors that will hold the projected points.
@@ -30,6 +40,11 @@ vec3_t cube_points[N_POINTS];
  * @brief The position of the camera in 3D space.
  */
 vec3_t camera_position = { 0, 0, -5 };
+
+/**
+ * @brief Cube rotation vector in 3D space.
+ */
+vec3_t cube_rotation = { 0, 0, 0};
 
 /**
  * @brief Check if the application is running.
@@ -130,15 +145,25 @@ vec2_t project(const vec3_t point)
  */
 void update(void)
 {
+	// Set the rotation amount for the cube points in each direction.
+	cube_rotation.x += 0.001f;
+	cube_rotation.y += 0.001f;
+	cube_rotation.z += 0.001f;
+	
 	for (int i = 0; i < N_POINTS; i++)
 	{
 		vec3_t point = cube_points[i];
 
-		// Move the point away from the camera.
-		point.z -= camera_position.z;
+		// Get the transformed points to render this frame.
+		vec3_t transformed_point = vec3_rotate_x(point, cube_rotation.x);
+		transformed_point = vec3_rotate_y(transformed_point, cube_rotation.y);
+		transformed_point = vec3_rotate_z(transformed_point, cube_rotation.y);
+
+		// Translate point away from the camera.
+		transformed_point.z -= camera_position.z;
 
 		// Project the current point.
-		vec2_t projected_point = project(point);
+		vec2_t projected_point = project(transformed_point);
 
 		// Save project 2D vector in the array of projected points.
 		projected_points[i] = projected_point;
@@ -151,7 +176,7 @@ void update(void)
 void render(void)
 {
 
-	draw_grid(0xFF333333);
+	draw_grid(DEFAULT_GRID_COLOR);
 
 	// Loop all projected points and render them.
 	for (int i = 0; i < N_POINTS; i++)
@@ -167,7 +192,7 @@ void render(void)
 	}
 
 	render_color_buffer();
-	clear_color_buffer(0xFF000000);
+	clear_color_buffer(CLEAR_BUFFER_COLOR);
 	
 	// Update the screen with the color we chose.
 	SDL_RenderPresent(renderer);

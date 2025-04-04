@@ -184,7 +184,7 @@ void draw_grid(const uint32_t color)
  * @param color An ARGB color value.
  * @param loc_x X position to draw.
  * @param loc_y Y position to draw.
- * @param width Witdh of rectangle.
+ * @param width Width of rectangle.
  * @param height Height of rectangle.
  */
 void draw_rect(const uint32_t color, const float loc_x, const float loc_y, const int width, const int height)
