@@ -157,7 +157,7 @@ void update(void)
 		// Get the transformed points to render this frame.
 		vec3_t transformed_point = vec3_rotate_x(point, cube_rotation.x);
 		transformed_point = vec3_rotate_y(transformed_point, cube_rotation.y);
-		transformed_point = vec3_rotate_z(transformed_point, cube_rotation.y);
+		transformed_point = vec3_rotate_z(transformed_point, cube_rotation.z);
 
 		// Translate point away from the camera.
 		transformed_point.z -= camera_position.z;
