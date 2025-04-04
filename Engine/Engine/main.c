@@ -13,7 +13,7 @@
 /**
  * @brief The factor used to calculate the field of view.
  */
-#define FOV_FACTOR (float)700
+#define FOV_FACTOR (float)650
 
 /**
  * @brief The default grid color.
@@ -26,6 +26,10 @@
 #define CLEAR_BUFFER_COLOR 0xFF000000
 
 #pragma region Global variables
+/**
+ * @brief The rotation amount for the cube points in each direction.
+ */
+float uniform_axis_rotation = 0.005f;
 /**
  * @brief Array of 2D vectors that will hold the projected points.
  */
@@ -146,15 +150,15 @@ vec2_t project(const vec3_t point)
 void update(void)
 {
 	// Set the rotation amount for the cube points in each direction.
-	cube_rotation.x += 0.001f;
-	cube_rotation.y += 0.001f;
-	cube_rotation.z += 0.001f;
+	cube_rotation.x += uniform_axis_rotation;
+	cube_rotation.y += uniform_axis_rotation;
+	cube_rotation.z += uniform_axis_rotation;
 	
 	for (int i = 0; i < N_POINTS; i++)
 	{
 		vec3_t point = cube_points[i];
 
-		// Get the transformed points to render this frame.
+		// Get the transformed points to update projections.
 		vec3_t transformed_point = vec3_rotate_x(point, cube_rotation.x);
 		transformed_point = vec3_rotate_y(transformed_point, cube_rotation.y);
 		transformed_point = vec3_rotate_z(transformed_point, cube_rotation.z);
