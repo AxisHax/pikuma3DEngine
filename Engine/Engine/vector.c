@@ -1,35 +1,35 @@
 ﻿#include <math.h>
 #include "vector.h"
 
-vec3_t vec3_rotate_x(vec3_t originalVector, float angle)
+vec3_t vec3_rotate_x(const vec3_t original_vector, const float angle)
 {
-    vec3_t rotatedVector = {
-        .x = originalVector.x,
-        .y = originalVector.y * cos(angle) - originalVector.z * sin(angle),
-        .z = originalVector.y * sin(angle) + originalVector.z * cos(angle)
+    const vec3_t rotated_vector = {
+        .x = original_vector.x,
+        .y = original_vector.y * cosf(angle) - original_vector.z * sinf(angle),
+        .z = original_vector.y * sinf(angle) + original_vector.z * cosf(angle)
     };
 
-    return rotatedVector;
+    return rotated_vector;
 }
 
-vec3_t vec3_rotate_y(vec3_t originalVector, float angle)
+vec3_t vec3_rotate_y(const vec3_t original_vector, const float angle)
 {
-    vec3_t rotatedVector = {
-        .x = originalVector.x * cos(angle) - originalVector.z * sin(angle),
-        .y = originalVector.y,
-        .z = originalVector.x * sin(angle) + originalVector.z * cos(angle)
+    const vec3_t rotated_vector = {
+        .x = original_vector.x * cosf(angle) - original_vector.z * sinf(angle),
+        .y = original_vector.y,
+        .z = original_vector.x * sinf(angle) + original_vector.z * cosf(angle)
     };
 
-    return rotatedVector;
+    return rotated_vector;
 }
 
-vec3_t vec3_rotate_z(vec3_t originalVector, float angle)
+vec3_t vec3_rotate_z(const vec3_t original_vector, const float angle)
 {
-    vec3_t rotatedVector = {
-        .x = originalVector.x * cos(angle) - originalVector.y * sin(angle),
-        .y = originalVector.x * sin(angle) + originalVector.y * cos(angle),
-        .z = originalVector.z
+    const vec3_t rotated_vector = {
+        .x = original_vector.x * cosf(angle) - original_vector.y * sinf(angle),
+        .y = original_vector.x * sinf(angle) + original_vector.y * cosf(angle),
+        .z = original_vector.z
     };
 
-    return rotatedVector;
+    return rotated_vector;
 }

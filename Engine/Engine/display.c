@@ -4,6 +4,20 @@
 #include <SDL.h>
 #include <stdbool.h>
 
+#pragma region Preprocessor directives
+/**
+ * @brief Error message for when SDL initialization fails.
+ */
+#define SDL_INIT_ERR "Error initializing SDL.\n"
+/**
+ * @brief Error message for when the SDL window cannot be created.
+ */
+#define SDL_WINDOW_CREATE_ERR "Error creating the SDL window.\n"
+/**
+ * @brief Error message for when the SDL renderer cannot be created.
+ */
+#define SDL_RENDERER_CREATE_ERR "Error creating the SDL renderer.\n"
+#pragma endregion 
 
 #pragma region Global variables
 /// <summary>
@@ -52,7 +66,7 @@ bool initialize_window(void)
 	if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
 	{
 		// If everything wasn't initialized correctly, return false.
-		fprintf(stderr, "Error initializing SDL.\n");
+		int _ = fprintf(stderr, SDL_INIT_ERR);
 		return false;
 	}
 
@@ -75,7 +89,7 @@ bool initialize_window(void)
 	if (!window)
 	{
 		// There was an error.
-		fprintf(stderr, "Error creating the SDL window.\n");
+		int _ = fprintf(stderr, SDL_WINDOW_CREATE_ERR);
 		return false;
 	}
 
@@ -85,7 +99,7 @@ bool initialize_window(void)
 	if (!renderer)
 	{
 		// There was an issue creating the SDL renderer.
-		fprintf(stderr, "Error creating SDL renderer.\n");
+		int _ = fprintf(stderr, SDL_RENDERER_CREATE_ERR);
 		return false;
 	}
 
@@ -97,7 +111,7 @@ bool initialize_window(void)
 }
 
 /**
- * @brief Setup the color buffer.
+ * @brief Render the color buffer.
  */
 void render_color_buffer(void)
 {
@@ -110,14 +124,14 @@ void render_color_buffer(void)
 
 	if (res < 0)
 	{
-		fprintf(stderr, "Error occured while updating texture: %d.\n", SDL_Error(res));
+		int _ = fprintf(stderr, "Error occured while updating texture: %d.\n", SDL_Error(res));
 	}
 
 	res = SDL_RenderCopy(renderer, color_buffer_texture, NULL, NULL);
 
 	if (res < 0)
 	{
-		fprintf(stderr, "Error occured while updating texture: %d.\n", SDL_Error(res));
+		int _ = fprintf(stderr, "Error occured while updating texture: %d.\n", SDL_Error(res));
 	}
 }
 
@@ -130,7 +144,7 @@ void clear_color_buffer(const uint32_t color)
 	// int y = 0;
 	// int x = 0;
 
-	// // Optimized loop... but its slower.
+	// // Optimized loop... but it's slower.
 	// for (int i = 0; i < window_width * window_height; i++, y = (i / window_width), x = (i % window_width))
 	// {
 	// 	// Set the pixel color.

@@ -42,26 +42,26 @@ typedef struct
 
 /**
  * @brief Rotate a 3D vector around the x-axis.
- * @param originalVector The original vector to rotate.
+ * @param original_vector The original vector to rotate.
  * @param angle The angle to rotate the vector by in radians.
  * @return A new rotated vector.
  */
-vec3_t vec3_rotate_x(vec3_t originalVector, float angle);
+vec3_t vec3_rotate_x(const vec3_t original_vector, const float angle);
 
 /**
  * @brief Rotate a 3D vector around the y-axis.
- * @param originalVector The original vector to rotate.
+ * @param original_vector The original vector to rotate.
  * @param angle The angle to rotate the vector by in radians.
  * @return A new rotated vector.
  */
-vec3_t vec3_rotate_y(vec3_t originalVector, float angle);
+vec3_t vec3_rotate_y(const vec3_t original_vector, const float angle);
 
 /**
  * @brief Rotate a 3D vector around the z-axis.
- * @param originalVector The original vector to rotate.
+ * @param original_vector The original vector to rotate.
  * @param angle The angle to rotate the vector by in radians.
  * @return A new rotated vector.
  */
-vec3_t vec3_rotate_z(vec3_t originalVector, float angle);
+vec3_t vec3_rotate_z(const vec3_t original_vector, const float angle);
 
 #endif

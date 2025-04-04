@@ -5,6 +5,7 @@
 #include "display.h"
 #include "vector.h"
 
+#pragma region Preprocessor directives
 /**
  * @brief The number of points in the cube.
  */
@@ -24,6 +25,17 @@
  * @brief The color to use when clearing the color buffer.
  */
 #define CLEAR_BUFFER_COLOR 0xFF000000
+
+/**
+ * @brief Error message for when the color buffer cannot be allocated.
+ */
+#define CBUFFER_ALLOCATION_ERR "Error allocating color buffer.\n"
+
+/**
+ * @brief Error message for when the color buffer texture cannot be created.
+ */
+#define CBUFFER_TEXTURE_CREATE_ERR "Error creating the color buffer texture.\n"
+#pragma endregion
 
 #pragma region Global variables
 /**
@@ -67,7 +79,7 @@ void setup(void)
 
 	if (!color_buffer)
 	{
-		fprintf(stderr, "Error allocating color buffer.\n");
+		int _ = fprintf(stderr, CBUFFER_ALLOCATION_ERR);
 		return;
 	}
 
@@ -82,18 +94,19 @@ void setup(void)
 
 	if (!color_buffer_texture)
 	{
-		fprintf(stderr, "Error creating the color buffer texture.\n");
+		int _ = fprintf(stderr, CBUFFER_TEXTURE_CREATE_ERR);
 	}
 
 	
 	int point_count = 0;
+	float uniform_point_offset = 0.25f;
 
 	// Loop through all points in the cube.
-	for (float x = -1; x <= 1; x += 0.25f)
+	for (float x = -1; x <= 1; x += uniform_point_offset)
 	{
-		for (float y = -1; y <= 1; y += 0.25f)
+		for (float y = -1; y <= 1; y += uniform_point_offset)
 		{
-			for (float z = -1; z <= 1; z += 0.25f)
+			for (float z = -1; z <= 1; z += uniform_point_offset)
 			{
 				vec3_t new_point = { .x = x, .y = y, .z = z };
 				cube_points[point_count++] = new_point;
@@ -117,6 +130,7 @@ void process_input(void)
 			// Stop running the application.
 			is_running = false;
 			break;
+		
 		// Triggers on key press.
 		case SDL_KEYDOWN:
 			// If we press the escape key, quit the application.
@@ -156,6 +170,7 @@ void update(void)
 	
 	for (int i = 0; i < N_POINTS; i++)
 	{
+		// Current point in the cube.
 		vec3_t point = cube_points[i];
 
 		// Get the transformed points to update projections.
