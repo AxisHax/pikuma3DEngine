@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <SDL.h>
 #include <stdbool.h>
+#include <math.h>
 #include "display.h"
 
 #pragma region Preprocessor directives

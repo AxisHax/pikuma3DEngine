@@ -75,9 +75,9 @@ void clear_color_buffer(const uint32_t color);
 
 /**
  * @brief Draw a pixel to the screen.
+ * @param color An ARGB color value.
  * @param x X position to draw.
  * @param y Y position to draw.
- * @param color An ARGB color value.
  */
 void draw_pixel(const uint32_t color, const int x, const int y);
 
