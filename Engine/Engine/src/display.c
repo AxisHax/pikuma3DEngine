@@ -226,14 +226,14 @@ void draw_rect(const uint32_t color, const float loc_x, const float loc_y, const
  */
 void draw_line_DDA(const uint32_t color, const vec2_t initial_point, const vec2_t target_point)
 {
-	const int delta_x = (target_point.x - initial_point.x);
-	const int delta_y = (target_point.y - initial_point.y);
+	const int delta_x = (int)(target_point.x - initial_point.x);
+	const int delta_y = (int)(target_point.y - initial_point.y);
 	// Sometimes delta_y is GREATER than delta_x, meaning we need to run the total delta_y side length instead
 	// of delta_x.
-	const float side_length = (abs(delta_x) >= abs(delta_y)) ? abs(delta_x) : abs(delta_y);
+	const float side_length = (float)((abs(delta_x) >= abs(delta_y)) ? abs(delta_x) : abs(delta_y));
 
-	const float x_inc = delta_x / (float)side_length;
-	const float y_inc = delta_y / (float)side_length;
+	const float x_inc = ((float)delta_x / side_length);
+	const float y_inc = ((float)delta_y / side_length);
 
 	float current_x = initial_point.x;
 	float current_y = initial_point.y;
