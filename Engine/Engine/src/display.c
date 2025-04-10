@@ -248,8 +248,8 @@ void draw_line_DDA(const uint32_t color, const vec2_t initial_point, const vec2_
 
 void destroy_window(void)
 {
-	free(color_buffer);
 	SDL_DestroyRenderer(renderer);
+	SDL_DestroyTexture(color_buffer_texture);
 	SDL_DestroyWindow(window);
 	SDL_Quit();
 }

@@ -56,11 +56,6 @@ triangle_t* triangles_to_render = NULL;
 vec3_t camera_position = { 0, 0, -5 };
 
 /**
- * @brief Cube rotation vector in 3D space.
- */
-vec3_t cube_rotation = { 0, 0, 0 };
-
-/**
  * @brief Time elapsed since the previous frame.
  */
 unsigned int previous_frame_time = 0;
@@ -99,6 +94,8 @@ void setup(void)
 	{
 		int _ = fprintf(stderr, CBUFFER_TEXTURE_CREATE_ERR);
 	}
+
+	load_cube_mesh_data();
 }
 
 /**
@@ -158,26 +155,29 @@ void update(void)
 		SDL_Delay(time_to_wait);
 	}
 
-	// Initialize dynamic array of triangles to render.
-	triangles_to_render = NULL;
-	
 	// How many ms passed since the last frame? SDL has a function for this.
 	previous_frame_time = SDL_GetTicks();
 	
+	// Initialize dynamic array of triangles to render.
+	triangles_to_render = NULL;
+	
 	// Set the rotation amount for the cube points in each direction.
-	cube_rotation.x += uniform_axis_rotation;
-	cube_rotation.y += uniform_axis_rotation;
-	cube_rotation.z += uniform_axis_rotation;
+	mesh.rotation.x += uniform_axis_rotation;
+	mesh.rotation.y += uniform_axis_rotation;
+	mesh.rotation.z += uniform_axis_rotation;
+
+	const int num_faces = array_length(mesh.faces);
+	const int num_vertices = array_length(mesh.vertices);
 
 	// Loop through all the triangle faces that compose our cube mesh.
-	for (int i = 0; i < N_MESH_FACES; i++)
+	for (int i = 0; i < num_faces; i++)
 	{
-		face_t mesh_face = mesh_faces[i];
+		const face_t mesh_face = mesh.faces[i];
 		
 		vec3_t face_vertices[3];
-		face_vertices[0] = mesh_vertices[mesh_face.a - 1];
-		face_vertices[1] = mesh_vertices[mesh_face.b - 1];
-		face_vertices[2] = mesh_vertices[mesh_face.c - 1];
+		face_vertices[0] = mesh.vertices[mesh_face.a - 1];
+		face_vertices[1] = mesh.vertices[mesh_face.b - 1];
+		face_vertices[2] = mesh.vertices[mesh_face.c - 1];
 
 		triangle_t projected_triangle;
 		
@@ -186,9 +186,9 @@ void update(void)
 		{
 			vec3_t transformed_vertex = face_vertices[j];
 
-			transformed_vertex = vec3_rotate_x(transformed_vertex, cube_rotation.x);
-			transformed_vertex = vec3_rotate_y(transformed_vertex, cube_rotation.y);
-			transformed_vertex = vec3_rotate_z(transformed_vertex, cube_rotation.z);
+			transformed_vertex = vec3_rotate_x(transformed_vertex, mesh.rotation.x);
+			transformed_vertex = vec3_rotate_y(transformed_vertex, mesh.rotation.y);
+			transformed_vertex = vec3_rotate_z(transformed_vertex, mesh.rotation.z);
 
 			// Translate vertex away from camera.
 			transformed_vertex.z -= camera_position.z;
@@ -276,6 +276,16 @@ void render(void)
 }
 
 /**
+ * @brief Free the memory that was dynamically allocated by the program.
+ */
+void free_allocated_resources(void)
+{
+	free(color_buffer);
+	array_free(mesh.faces);
+	array_free(mesh.vertices);
+}
+
+/**
  * @brief Main entry point of the application.
  * @param argc The number of command line arguments.
  * @param argv The command line arguments.
@@ -296,6 +306,7 @@ int main(int argc, char* argv[])
 	}
 
 	destroy_window();
+	free_allocated_resources();
 	
 	return 0;
 }
